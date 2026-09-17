@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">VOX</string>
+    <string name="accessibility_service_description">VOX lit à voix haute le texte visible dans l’application active quand vous touchez la bulle VOX.</string>
+</resources>
