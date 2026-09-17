@@ -1,0 +1,65 @@
+name: Bootstrap VOICELIB
+
+on:
+  push:
+    branches: [ "main" ]
+
+permissions:
+  contents: write
+
+jobs:
+  bootstrap-and-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install VOICELIB source
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f VOICELIB-v0.1-source.zip
+          rm -rf .bootstrap
+          mkdir .bootstrap
+          unzip -q VOICELIB-v0.1-source.zip -d .bootstrap
+          cp -a .bootstrap/VOX-Android-v0.1/. .
+          rm -rf .bootstrap VOICELIB-v0.1-source.zip .github/workflows/bootstrap.yml
+
+      - name: Commit VOICELIB V0.1
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Bootstrap VOICELIB Android V0.1"
+          git push
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install Android 36 SDK
+        run: sdkmanager "platforms;android-36" "build-tools;36.0.0"
+
+      - name: Set up Gradle 9.6
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '9.6.0'
+
+      - name: Build debug APK
+        run: gradle :app:assembleDebug --stacktrace
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: VOICELIB-v0.1-debug-apk
+          path: app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
