@@ -22,9 +22,22 @@ Prototype de lecteur vocal d'écran Android.
 
 ## Compiler sur GitHub
 
-Le workflow `.github/workflows/build-apk.yml` compile automatiquement l'APK à chaque push sur `main`.
+Le workflow `.github/workflows/android-build.yml` compile automatiquement l'APK de debug
+à chaque push sur `main` (et à la demande via **Actions → Build APK → Run workflow**).
 
-Dans GitHub : **Actions → Build VOX APK → dernier run → Artifacts → VOX-v0.1-debug-apk**.
+Dans GitHub : **Actions → Build APK → dernier run → Artifacts → VOICELIB-v0.1-debug-apk**.
+
+Chaîne de build : JDK 17, Gradle 9.7.1 (wrapper versionné dans le dépôt),
+Android Gradle Plugin 9.4.0, `compileSdk`/`targetSdk` 36, `minSdk` 26.
+
+## Compiler en local
+
+```
+./gradlew :app:assembleDebug
+```
+
+L'APK est produit dans `app/build/outputs/apk/debug/app-debug.apk`.
+Un SDK Android avec `platforms;android-36` et `build-tools;36.0.0` est requis.
 
 ## Installer sur Android
 
@@ -40,7 +53,3 @@ Dans GitHub : **Actions → Build VOX APK → dernier run → Artifacts → VOX-
 ## Confidentialité de ce prototype
 
 La lecture est déclenchée explicitement par l'utilisateur. La V0.1 n'envoie aucun texte vers un serveur : le texte capturé reste dans le processus de l'application et est transmis au moteur TTS Android configuré sur l'appareil. Le comportement réseau éventuel du moteur TTS lui-même dépend du moteur choisi dans les réglages Android.
-
-## Mises à jour depuis un téléphone
-
-Le dossier `updates/` sert de boîte de dépôt pour les patches générés pendant le développement. Un fichier `.patch` envoyé dans ce dossier déclenche automatiquement son application et une nouvelle compilation APK via GitHub Actions. Cela permet de faire évoluer VOICELIB depuis un téléphone sans Android Studio.
